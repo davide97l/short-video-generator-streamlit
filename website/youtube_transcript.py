@@ -1,0 +1,76 @@
+from youtube_transcript_api import YouTubeTranscriptApi
+
+video_id = 'zNBwUl4kFdU'
+#transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en'])
+#print(transcript)
+
+transcript = [{'text': 'what exactly happened with Elliot Kip', 'start': 2.76, 'duration': 5.48}, {'text': 'chog in the 2024 Tokyo Marathon this was', 'start': 4.759, 'duration': 6.161}, {'text': 'a very rare loss for Elliot kog in the', 'start': 8.24, 'duration': 4.6}, {'text': 'marathon given that he has been nearly', 'start': 10.92, 'duration': 4.24}, {'text': 'Untouchable for more than a decade now', 'start': 12.84, 'duration': 4.12}, {'text': "however if you haven't heard he finished", 'start': 15.16, 'duration': 3.92}, {'text': "in 10th place in this year's Tokyo", 'start': 16.96, 'duration': 4.239}, {'text': 'Marathon which is the lowest that he has', 'start': 19.08, 'duration': 4.24}, {'text': 'ever finished in a marathon now there', 'start': 21.199, 'duration': 3.721}, {'text': 'are many different theories as to', 'start': 23.32, 'duration': 3.16}, {'text': 'exactly what happened some involved', 'start': 24.92, 'duration': 3.56}, {'text': 'shoes some involved Pace some involve', 'start': 26.48, 'duration': 3.119}, {'text': "the weather but we're going to break", 'start': 28.48, 'duration': 2.92}, {'text': "down EX what happened from Kip Cho's", 'start': 29.599, 'duration': 3.681}, {'text': 'perspective and see how this affects his', 'start': 31.4, 'duration': 4.2}, {'text': 'future now the first Theory involves his', 'start': 33.28, 'duration': 3.959}, {'text': 'shoes which are the brand new Nike', 'start': 35.6, 'duration': 3.76}, {'text': 'alphafly 3s and some people are saying', 'start': 37.239, 'duration': 3.48}, {'text': "that he just wasn't ready for these", 'start': 39.36, 'duration': 3.08}, {'text': 'shoes but we can actually go ahead and', 'start': 40.719, 'duration': 4.121}, {'text': 'stop that theory right now because while', 'start': 42.44, 'duration': 4.48}, {'text': "these are Nike's newest installment of", 'start': 44.84, 'duration': 4.44}, {'text': 'the Nike kicks he actually wore these in', 'start': 46.92, 'duration': 4.2}, {'text': "last year's Berlin marathon where he", 'start': 49.28, 'duration': 4.279}, {'text': 'placed first for his fifth title given', 'start': 51.12, 'duration': 3.56}, {'text': "that he's already run a successful", 'start': 53.559, 'duration': 3.081}, {'text': "marathon in these shoes it just doesn't", 'start': 54.68, 'duration': 3.199}, {'text': "make sense to say that he wouldn't fit", 'start': 56.64, 'duration': 3.28}, {'text': 'in well with these and perform poorly so', 'start': 57.879, 'duration': 4.16}, {'text': 'so this clearly is not the casee but', 'start': 59.92, 'duration': 4.16}, {'text': 'moving over to the actual race and the', 'start': 62.039, 'duration': 4.481}, {'text': 'pace this seems to hold much more of an', 'start': 64.08, 'duration': 4.92}, {'text': 'effect on Elliot kipo so to run through', 'start': 66.52, 'duration': 4.239}, {'text': 'what happened on the race kog was up', 'start': 69.0, 'duration': 3.799}, {'text': 'with the leaders for basically the first', 'start': 70.759, 'duration': 4.68}, {'text': 'half marathon and they were flying', 'start': 72.799, 'duration': 4.36}, {'text': 'through the first half in fact they were', 'start': 75.439, 'duration': 3.561}, {'text': 'on world record pace which is a', 'start': 77.159, 'duration': 4.761}, {'text': 'ridiculous tempo for 13 mil now right', 'start': 79.0, 'duration': 5.479}, {'text': 'before 20 km is when kug started to fade', 'start': 81.92, 'duration': 4.159}, {'text': 'back from the lead athletes and the', 'start': 84.479, 'duration': 2.881}, {'text': 'front three passed through the half', 'start': 86.079, 'duration': 4.121}, {'text': 'marathon in 1 hour and 20 seconds while', 'start': 87.36, 'duration': 5.16}, {'text': 'kog passed through in around 1 hour and', 'start': 90.2, 'duration': 5.64}, {'text': '30 seconds now this pace placed kog in', 'start': 92.52, 'duration': 5.48}, {'text': 'around 2 hours and 1 minute for the', 'start': 95.84, 'duration': 4.0}, {'text': 'Finish however he only finished in 2', 'start': 98.0, 'duration': 3.88}, {'text': 'hours 6 minutes and 50 seconds which', 'start': 99.84, 'duration': 4.919}, {'text': 'showcases a massive positive split going', 'start': 101.88, 'duration': 5.4}, {'text': 'from 1 hour and 30 seconds to 1 hour 6', 'start': 104.759, 'duration': 5.0}, {'text': 'minutes and 20 seconds this is easily', 'start': 107.28, 'duration': 4.4}, {'text': 'the biggest positive split of Elliot', 'start': 109.759, 'duration': 4.601}, {'text': "kipo's career and it certainly showcases", 'start': 111.68, 'duration': 4.2}, {'text': 'something crucial that happened in the', 'start': 114.36, 'duration': 3.16}, {'text': 'middle of the race and when it comes to', 'start': 115.88, 'duration': 3.96}, {'text': 'the exact thing Kip chog was slightly', 'start': 117.52, 'duration': 4.08}, {'text': 'cryptic saying that something happened', 'start': 119.84, 'duration': 3.4}, {'text': "in the middle of the race and he's not", 'start': 121.6, 'duration': 3.32}, {'text': 'exactly sure what happened and he chalks', 'start': 123.24, 'duration': 3.76}, {'text': 'it up to it just being a bad day but I', 'start': 124.92, 'duration': 3.6}, {'text': 'actually think that what happened was', 'start': 127.0, 'duration': 4.72}, {'text': 'that kug was simply gassed by the 20 km', 'start': 128.52, 'duration': 5.68}, {'text': 'mark because running 4 minutes and 35', 'start': 131.72, 'duration': 5.599}, {'text': 'second miles is just a huge huge', 'start': 134.2, 'duration': 4.96}, {'text': "challenge for anyone and it's also", 'start': 137.319, 'duration': 3.961}, {'text': 'important to note that the sun was out', 'start': 139.16, 'duration': 4.32}, {'text': "for almost the entire race which wasn't", 'start': 141.28, 'duration': 4.239}, {'text': 'exactly expected but when the sun is out', 'start': 143.48, 'duration': 4.56}, {'text': 'during a marathon it can drain you and I', 'start': 145.519, 'duration': 4.761}, {'text': 'do think that kog was simply reaching', 'start': 148.04, 'duration': 4.52}, {'text': 'his Red Line earlier than he has ever', 'start': 150.28, 'duration': 4.239}, {'text': 'done now the crazy thing is that for the', 'start': 152.56, 'duration': 3.959}, {'text': 'first half marathon kipo was running', 'start': 154.519, 'duration': 4.321}, {'text': 'right around 4 minutes and 36 seconds', 'start': 156.519, 'duration': 4.121}, {'text': 'per mile and for the second half', 'start': 158.84, 'duration': 4.399}, {'text': 'marathon his Pace was 5 minutes and 5', 'start': 160.64, 'duration': 4.48}, {'text': 'seconds per mile so even though he did', 'start': 163.239, 'duration': 4.521}, {'text': "slow down he certainly didn't blow up", 'start': 165.12, 'duration': 4.56}, {'text': 'which does happen to certain individuals', 'start': 167.76, 'duration': 3.28}, {'text': 'where they could run a solid opening', 'start': 169.68, 'duration': 2.96}, {'text': 'half but then they just completely', 'start': 171.04, 'duration': 3.76}, {'text': 'implode and are unable to finish the', 'start': 172.64, 'duration': 3.92}, {'text': 'fact that kog kept running here', 'start': 174.8, 'duration': 3.68}, {'text': 'showcases that he still had energy left', 'start': 176.56, 'duration': 4.039}, {'text': 'in the tank I just think that he ran', 'start': 178.48, 'duration': 4.0}, {'text': 'slightly Beyond his means and he had to', 'start': 180.599, 'duration': 3.681}, {'text': 'slow down in order to reach a better', 'start': 182.48, 'duration': 4.0}, {'text': 'balanced Pace now the winner in this', 'start': 184.28, 'duration': 4.599}, {'text': 'race was Benson Kudo with a time of 2', 'start': 186.48, 'duration': 4.88}, {'text': 'hours 2 minutes and 16 seconds which', 'start': 188.879, 'duration': 4.08}, {'text': 'took down his previous course record', 'start': 191.36, 'duration': 5.28}, {'text': 'from 2022 by exactly 26 seconds so bin', 'start': 192.959, 'duration': 5.521}, {'text': 'and Kudo certainly had an amazing', 'start': 196.64, 'duration': 3.239}, {'text': 'showing and this was a new personal', 'start': 198.48, 'duration': 4.039}, {'text': 'record by almost 2 minutes in previous', 'start': 199.879, 'duration': 4.44}, {'text': 'marathons kipo has been able to take', 'start': 202.519, 'duration': 3.8}, {'text': 'down anyone and holding this pace', 'start': 204.319, 'duration': 3.601}, {'text': "through the first half wouldn't", 'start': 206.319, 'duration': 3.801}, {'text': 'necessarily be that difficult in fact if', 'start': 207.92, 'duration': 4.48}, {'text': 'we go back to 2022 in Berlin where he', 'start': 210.12, 'duration': 4.119}, {'text': 'set his previous course record he ran', 'start': 212.4, 'duration': 4.559}, {'text': 'his opening half in 59 minutes and 51', 'start': 214.239, 'duration': 4.521}, {'text': 'seconds and then he ran his second half', 'start': 216.959, 'duration': 4.881}, {'text': 'marathon in 1 hour 1 minute and 18', 'start': 218.76, 'duration': 5.28}, {'text': 'seconds this certainly showcases that', 'start': 221.84, 'duration': 4.24}, {'text': 'kog has the ability to run an opening', 'start': 224.04, 'duration': 4.279}, {'text': 'half marathon in right around 1 hour and', 'start': 226.08, 'duration': 4.6}, {'text': 'then still Clos with solid speed but the', 'start': 228.319, 'duration': 4.041}, {'text': 'reality about Kip chugi right now is', 'start': 230.68, 'duration': 4.119}, {'text': 'that father time just might be making an', 'start': 232.36, 'duration': 4.56}, {'text': 'impact on his performances he has been', 'start': 234.799, 'duration': 4.601}, {'text': 'running so well for so long and even', 'start': 236.92, 'duration': 4.36}, {'text': 'though he did report that his training', 'start': 239.4, 'duration': 4.32}, {'text': 'was going well which usually showcases a', 'start': 241.28, 'duration': 4.48}, {'text': 'nearly unbeatable athlete time might', 'start': 243.72, 'duration': 3.64}, {'text': 'officially be catching up with this', 'start': 245.76, 'duration': 3.28}, {'text': '39-year-old', 'start': 247.36, 'duration': 4.0}, {'text': 'Kenyon now the repercussions of this', 'start': 249.04, 'duration': 3.64}, {'text': 'performance are actually quite', 'start': 251.36, 'duration': 3.28}, {'text': 'interesting because the Kenyan governing', 'start': 252.68, 'duration': 4.2}, {'text': 'body of the Olympics has not selected', 'start': 254.64, 'duration': 3.96}, {'text': 'the Kenyan team for the marathon yet for', 'start': 256.88, 'duration': 4.039}, {'text': 'Paris now I still believe that Kip chugi', 'start': 258.6, 'duration': 4.159}, {'text': 'will likely be selected as he and', 'start': 260.919, 'duration': 3.921}, {'text': 'himself is a huge Enterprise when it', 'start': 262.759, 'duration': 3.281}, {'text': 'comes to running and he certainly has', 'start': 264.84, 'duration': 3.28}, {'text': 'showcased consistency over the previous', 'start': 266.04, 'duration': 4.4}, {'text': 'few seasons but it is noteworthy to', 'start': 268.12, 'duration': 4.359}, {'text': 'mention that four other athletes', 'start': 270.44, 'duration': 4.199}, {'text': 'actually managed to beat kog in this', 'start': 272.479, 'duration': 3.961}, {'text': 'very race from Kenya so it would', 'start': 274.639, 'duration': 3.601}, {'text': 'certainly make sense to select binon Ki', 'start': 276.44, 'duration': 3.84}, {'text': 'rudo but what about the other athletes', 'start': 278.24, 'duration': 3.12}, {'text': 'would they earn their Olympic', 'start': 280.28, 'duration': 2.84}, {'text': 'positioning from this race we will just', 'start': 281.36, 'duration': 3.839}, {'text': 'have to wait and see on that decision I', 'start': 283.12, 'duration': 3.84}, {'text': "do want to point out that kipo's finish", 'start': 285.199, 'duration': 3.161}, {'text': 'here was actually still pretty', 'start': 286.96, 'duration': 3.32}, {'text': 'impressive All Things Considered and', 'start': 288.36, 'duration': 3.92}, {'text': 'even though he did experience something', 'start': 290.28, 'duration': 3.44}, {'text': 'very uncomfortable just before the', 'start': 292.28, 'duration': 3.359}, {'text': 'halfway point he still finished this', 'start': 293.72, 'duration': 3.6}, {'text': 'race and I think that that is certainly', 'start': 295.639, 'duration': 3.761}, {'text': 'an admirable thing to do thanks for', 'start': 297.32, 'duration': 4.439}, {'text': 'watching ing everyone and as always', 'start': 299.4, 'duration': 4.96}, {'text': 'until next', 'start': 301.759, 'duration': 2.601}, {'text': 'time', 'start': 317.0, 'duration': 3.0}]
+
+def build_script(transcript):
+    script = ""
+    for item in transcript:
+        script += item["text"] + " "
+    return script.strip()
+
+script = build_script(transcript)
+
+print(script)
+
+def split_script_by_topic(transcript):
+    """
+    Splits a script into blocks based on topic changes.
+
+    Args:
+        transcript: A list of dictionaries where each dictionary has the following keys:
+            text: The text of the transcript.
+            start: The start time of the transcript in seconds.
+            duration: The duration of the transcript in seconds.
+
+    Returns:
+        A list of strings where each string represents a block on a specific topic.
+    """
+    blocks = []
+    current_block = ""
+    for item in transcript:
+        text = item["text"]
+        if is_topic_change(text, current_block):
+            if current_block:
+                blocks.append(current_block.strip())
+            current_block = text
+        else:
+            current_block += " " + text
+    if current_block:
+        blocks.append(current_block.strip())
+    return blocks
+
+def is_topic_change(text, current_block):
+    """
+    Heuristically determines if the current text indicates a change in topic.
+
+    This is a simple implementation that looks for phrases like "however" or "moving on to"
+    that might suggest a shift in focus. It can be improved with more sophisticated NLP techniques.
+
+    Args:
+        text: The text to check for a topic change.
+        current_block: The current block of text.
+
+    Returns:
+        True if the text suggests a change in topic, False otherwise.
+    """
+    topic_change_words = [
+        "however", "moving on to", "meanwhile", "in addition to", "furthermore",
+        "firstly", "secondly", "thirdly", "on the other hand", "conversely",
+        "likewise", "similarly", "moreover", "besides", "additionally",
+        "therefore", "hence", "consequently", "to summarize", "in conclusion",
+        "overall", "next", "subsequently", "following"
+    ]
+    for word in topic_change_words:
+        if word.lower() in text.lower():
+            return True
+    return current_block == ""  # Consider an empty block as a new topic
+
+
+blocks = split_script_by_topic(transcript)
+
+for block in blocks:
+    print(block)
