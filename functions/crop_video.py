@@ -2,28 +2,18 @@ from moviepy.editor import VideoFileClip
 import os
 
 
-def crop_video(input_video_path, top, bottom, width, height, output_video_path=None, alignment=None):
+def crop_video(input_video_path, x, y, width, height, output_video_path=None):
     # Load video
     clip = VideoFileClip(input_video_path)
 
     # Get the dimensions of the original video
-    width, height = clip.size
+    max_width, max_height = clip.size
 
-    # Check if the new dimensions are valid, if not cap to max
-    new_width = min(new_width, width)
-    new_height = min(new_height, height)
-
-    # Calculate the cropping boundaries based on the alignment
-    if alignment == 'left':
-        left = 0
-    elif alignment == 'right':
-        left = width - new_width
-    else:  # center
-        left = (width - new_width) / 2
-
-    top = (height - new_height) / 2
-    right = left + new_width
-    bottom = top + new_height
+    # Calculate the cropping boundaries
+    left = min(max_width, x)
+    top = min(max_height, y)
+    right = min(max_width, left + width)
+    bottom = min(max_height, top + height)
 
     # Crop the video and retain the audio from the original clip
     cropped_clip = clip.crop(x1=int(left), y1=int(top), x2=int(right), y2=int(bottom)).set_audio(clip.audio)
@@ -34,10 +24,10 @@ def crop_video(input_video_path, top, bottom, width, height, output_video_path=N
         name, ext = os.path.splitext(base_name)
         output_video_path = os.path.join(
             os.path.dirname(input_video_path),
-            "{name}_cropped_{new_width}_{new_height}{ext}".format(
+            "{name}_cropped{ext}".format(
                 name=name,
-                new_width=new_width,
-                new_height=new_height,
+                new_width=right-left,
+                new_height=bottom-top,
                 ext=ext
             )
         )

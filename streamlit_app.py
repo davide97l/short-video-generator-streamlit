@@ -117,10 +117,29 @@ if st.session_state.sub_video:
             st.write("Double click to save crop")
         # Get a cropped image from the frontend
         cropped_img, box = st_cropper(img, realtime_update=realtime_update, box_color=box_color,
-                                 aspect_ratio=aspect_ratio, return_type='both')
+                                      aspect_ratio=aspect_ratio, return_type='both')
 
         # Manipulate cropped image at will
         st.subheader(f"Preview ({box})")
         _ = cropped_img.thumbnail((150,150))
         st.image(cropped_img)
+
+        st.session_state.crop_video_path = None
+        if st.button("Crop video"):
+            crop_video_path = crop_video(st.session_state.sub_video, box['left'], box['top'], box['width'], box['height'])
+            st.session_state.crop_video_path = crop_video_path
+
+
+st.session_state.crop_video_path = 'data2/youtube_video_cropped.mp4'
+if st.session_state.crop_video_path:
+    cols = st.columns((1, 2, 1))
+    cols[1].video(st.session_state.crop_video_path)
+    # Download button
+    with open(st.session_state.crop_video_path, 'rb') as file:
+        btn = st.download_button(
+            "Download Video",
+            file,
+            file_name=st.session_state.crop_video_path,
+            mime="video/mp4",
+        )
 
