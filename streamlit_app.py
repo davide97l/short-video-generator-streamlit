@@ -11,6 +11,8 @@ from functions.split_video_intervals import split_video_intervals
 from functions.crop_video import crop_video
 from functions.video_duration import video_duration
 from functions.video_thumbnail import video_thumbnail
+from functions.video_add_captions import video_add_captions
+from functions.audio_transcription_to_subtitle import audio_transcription_to_subtitle
 from streamlit_cropper import st_cropper
 from PIL import Image
 
@@ -134,12 +136,22 @@ st.session_state.crop_video_path = 'data2/youtube_video_cropped.mp4'
 if st.session_state.crop_video_path:
     cols = st.columns((1, 2, 1))
     cols[1].video(st.session_state.crop_video_path)
-    # Download button
-    with open(st.session_state.crop_video_path, 'rb') as file:
+
+if st.session_state.crop_video_path:
+    st.session_state.video_captions_path = None
+    if st.button("Make captions"):
+        subtitles = audio_transcription_to_subtitle(transcription_path, output_format="srt")
+        video_captions_path = video_add_captions(subtitles, st.session_state.crop_video_path)
+        st.session_state.video_captions_path = video_captions_path
+
+st.session_state.video_captions_path = 'data2/youtube_video_cropped_subtitled1.mp4'
+if st.session_state.video_captions_path:
+    cols2 = st.columns((1, 2, 1))
+    cols2[1].video(st.session_state.video_captions_path)
+    with open(st.session_state.video_captions_path, 'rb') as file:
         btn = st.download_button(
             "Download Video",
             file,
-            file_name=st.session_state.crop_video_path,
+            file_name=st.session_state.video_captions_path,
             mime="video/mp4",
         )
-

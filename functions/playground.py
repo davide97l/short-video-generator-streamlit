@@ -14,7 +14,7 @@ video_path = '../data/youtube_video.mp4'
 short_video_path = '../data/youtube_video_1.mp4'
 cropped_short_video_path = '../data/cropped_youtube_video_1.mp4'
 split_video_timestamps = [15, 20]
-audio_speech_path = '../data/youtube_video.mp3'
+audio_speech_path = '../data/youtube_video_1.mp3'
 audio_transcription_sentences = "../data/audio_transcription.json"
 audio_transcription_words = "../data/audio_transcription_words.json"
 substring = "so child came"
@@ -24,8 +24,8 @@ substring = "so child came"
 #download_video_youtube(youtube_url, resolution=None, path=path, filename='youtube_video')
 #split_video_intervals(video_path, split_video_timestamps, output_folder=path, keep_excluded_intervals=False)
 #crop_video(short_video_path, cropped_short_video_path, new_width=400, new_height=800, alignment='center')
-#extract_audio_video(video_file=video_path)
-#audio_transcription(audio_speech_path, audio_transcription_sentences, word_level=True)
+extract_audio_video(video_file=short_video_path)
+audio_transcription(audio_speech_path, audio_transcription_sentences, word_level=True)
 #text = audio_transcription_to_text(audio_transcription_sentences)
 #print(text)
 #paragraphs = text_to_paragraphs(text)
