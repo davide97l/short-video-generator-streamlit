@@ -13,6 +13,7 @@ from functions.video_duration import video_duration
 from functions.video_thumbnail import video_thumbnail
 from functions.video_add_captions import video_add_captions
 from functions.audio_transcription_to_subtitle import audio_transcription_to_subtitle
+from functions.image_add_captions import image_add_captions
 from streamlit_cropper import st_cropper
 from PIL import Image
 
@@ -96,7 +97,7 @@ st.session_state.sub_video = video_path # TODO remove
 
 if st.session_state.sub_video:
     st.header("Cropper Demo")
-    img_file = video_thumbnail(st.session_state.sub_video)
+    st.session_state.img_file = video_thumbnail(st.session_state.sub_video)
 
     # Cropper options section
     st.subheader("Cropper Options")
@@ -113,8 +114,8 @@ if st.session_state.sub_video:
     }
     aspect_ratio = aspect_dict[aspect_choice]
 
-    if img_file:
-        img = Image.open(img_file)
+    if st.session_state.img_file:
+        img = Image.open(st.session_state.img_file)
         if not realtime_update:
             st.write("Double click to save crop")
         # Get a cropped image from the frontend
@@ -139,9 +140,44 @@ if st.session_state.crop_video_path:
 
 if st.session_state.crop_video_path:
     st.session_state.video_captions_path = None
+    # Add a color picker for font color
+    font_color = st.color_picker("Choose font color", '#ffff00')  # Initial color is yellow
+    # Add a slider for font size
+    font_size = st.slider("Font size", min_value=0, max_value=120, value=24, step=12)
+    # Add checkbox for remove punctuation
+    remove_punctuation = st.checkbox("Remove punctuation", value=False)  # Default checked
+
+    # Get available fonts from the "font" folder
+    font_folder = "fonts"  # Replace with your actual folder path
+    font_files = [f for f in os.listdir(font_folder) if f.endswith((".ttf", ".otf"))]
+    # Extract font names without extensions
+    available_fonts = [os.path.splitext(f)[0] for f in font_files]  # Get filename without extension
+
+    # Display a dropdown to select font (show only name)
+    if available_fonts:
+        selected_font = st.selectbox("Font type", available_fonts)
+        font_path = os.path.join(font_folder, font_files[available_fonts.index(selected_font)])
+    else:
+        st.warning("No font files found in the 'font' folder.")
+        selected_font = None
+        font_path = None  # Set to None if no fonts found
+
+    # Preview font display (if font path available)
+    if selected_font:
+        st.session_state.cropped_thumbnail = video_thumbnail(st.session_state.crop_video_path)
+        preview_text = st.text_input("Edit preview text", "This is a preview of the selected font.")
+        captions_thumbnail_path = image_add_captions(
+            image_path=st.session_state.cropped_thumbnail, text=preview_text,
+            color=font_color, fontsize=font_size, remove_punctuation=remove_punctuation, font=font_path)
+        cols3 = st.columns((1, 2, 1))
+        cols3[1].image(captions_thumbnail_path)
+        #st.write(f'<span style="font-family: {font_path}; font-size: {font_size}px; color: {font_color}">{preview_text}</span>', unsafe_allow_html=True)
+
     if st.button("Make captions"):
         subtitles = audio_transcription_to_subtitle(transcription_path, output_format="srt")
-        video_captions_path = video_add_captions(subtitles, st.session_state.crop_video_path)
+        video_captions_path = video_add_captions(
+            subtitles, st.session_state.crop_video_path,
+            color=font_color, fontsize=font_size, remove_punctuation=remove_punctuation, font=font_path)
         st.session_state.video_captions_path = video_captions_path
 
 st.session_state.video_captions_path = 'data2/youtube_video_cropped_subtitled1.mp4'

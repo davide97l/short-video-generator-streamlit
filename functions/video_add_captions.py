@@ -42,8 +42,8 @@ def video_add_captions(subtitle_path: str, video_path: str, output_path: str = N
     return output_path
 
 
-font = '../fonts/LEMONMILK-Regular.otf'
+'''font = '../fonts/LEMONMILK-Regular.otf'
 subtitle_path = "../data/audio_transcription.srt"
 video_path = "../data/youtube_video_1.mp4"
 
-video_add_captions(subtitle_path, video_path, font=font, remove_punctuation=False)
+video_add_captions(subtitle_path, video_path, font=font, remove_punctuation=False, color='#ffffff')'''
