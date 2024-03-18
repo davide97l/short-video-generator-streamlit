@@ -2,7 +2,7 @@ import cv2
 import os
 
 
-def video_thumbnail(video_path):
+def video_thumbnail(video_path, frame_number=0):
     """Extracts the first frame of the video as a thumbnail and saves it.
 
     Args:
@@ -19,7 +19,7 @@ def video_thumbnail(video_path):
         return None
 
     # Read the first frame
-    success, frame = cap.read()
+    success, frame = cap.read(frame_number)
     if not success:
         print("Error reading video file!")
         return None

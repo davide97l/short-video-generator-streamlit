@@ -16,6 +16,7 @@ from functions.audio_transcription_to_subtitle import audio_transcription_to_sub
 from functions.image_add_captions import image_add_captions
 from streamlit_cropper import st_cropper
 from PIL import Image
+from random import randint
 
 
 def display_video(url):
@@ -144,6 +145,11 @@ if st.session_state.crop_video_path:
     font_color = st.color_picker("Choose font color", '#ffff00')  # Initial color is yellow
     # Add a slider for font size
     font_size = st.slider("Font size", min_value=0, max_value=120, value=24, step=12)
+    # Caption position mapping with renaming dictionary
+    caption_options = {"center": "Center", "top": "Top", "bottom": "Bottom"}
+    caption_position = st.radio("Caption Position", list(caption_options.values()))
+    # Display caption position selection (optional)
+    caption_position_key = list(caption_options.keys())[list(caption_options.values()).index(caption_position)]
     # Add checkbox for remove punctuation
     remove_punctuation = st.checkbox("Remove punctuation", value=False)  # Default checked
 
@@ -162,13 +168,33 @@ if st.session_state.crop_video_path:
         selected_font = None
         font_path = None  # Set to None if no fonts found
 
+    if "file_uploader_key" not in st.session_state:
+        st.session_state["file_uploader_key"] = 0
+    upload_font = st.file_uploader("Choose a font file (TTF, OTF)", type=["ttf", "otf"],
+                                   key=st.session_state["file_uploader_key"])
+    if upload_font is not None:
+        font_bytes = upload_font.read()
+        font_name = upload_font.name  # Use full name including extension for saving
+        if not os.path.exists(font_folder):
+            os.makedirs(font_folder)
+        save_path = os.path.join(font_folder, font_name)
+        try:
+            with open(save_path, "wb") as f:
+                f.write(font_bytes)
+            st.success(f"Font '{font_name}' uploaded and saved successfully!")
+            st.session_state["file_uploader_key"] += 1
+            st.rerun()
+        except Exception as e:
+            st.error(f"Error saving font: {e}")
+
     # Preview font display (if font path available)
     if selected_font:
         st.session_state.cropped_thumbnail = video_thumbnail(st.session_state.crop_video_path)
         preview_text = st.text_input("Edit preview text", "This is a preview of the selected font.")
         captions_thumbnail_path = image_add_captions(
             image_path=st.session_state.cropped_thumbnail, text=preview_text,
-            color=font_color, fontsize=font_size, remove_punctuation=remove_punctuation, font=font_path)
+            color=font_color, fontsize=font_size, remove_punctuation=remove_punctuation, font=font_path,
+            position=caption_position_key)
         cols3 = st.columns((1, 2, 1))
         cols3[1].image(captions_thumbnail_path)
         #st.write(f'<span style="font-family: {font_path}; font-size: {font_size}px; color: {font_color}">{preview_text}</span>', unsafe_allow_html=True)
@@ -177,7 +203,8 @@ if st.session_state.crop_video_path:
         subtitles = audio_transcription_to_subtitle(transcription_path, output_format="srt")
         video_captions_path = video_add_captions(
             subtitles, st.session_state.crop_video_path,
-            color=font_color, fontsize=font_size, remove_punctuation=remove_punctuation, font=font_path)
+            color=font_color, fontsize=font_size, remove_punctuation=remove_punctuation, font=font_path,
+            position=caption_position_key)
         st.session_state.video_captions_path = video_captions_path
 
 st.session_state.video_captions_path = 'data2/youtube_video_cropped_subtitled1.mp4'
