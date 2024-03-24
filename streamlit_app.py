@@ -15,6 +15,8 @@ from functions.video_add_captions import video_add_captions
 from functions.audio_transcription_to_subtitle import audio_transcription_to_subtitle
 from functions.image_add_captions import image_add_captions
 from streamlit_cropper import st_cropper
+from functions.text_to_paragraph import text_to_paragraph
+from functions.streamlit_utils import text_add_color
 from PIL import Image
 from random import randint
 
@@ -41,7 +43,9 @@ print(audio_path)
 transcription_path = 'data2/youtube_video.json'
 #transcription_path = audio_transcription(audio_path)
 print(transcription_path)
-video_text = audio_transcription_to_text(transcription_path)
+if 'video_text' not in st.session_state:
+    st.session_state.video_text = audio_transcription_to_text(transcription_path)
+    st.session_state.video_text_original = st.session_state.video_text
 sentence_dict = audio_transcription_to_sentence_dict(transcription_path)
 
 strings = []
@@ -50,10 +54,30 @@ for i, sentence in enumerate(sentence_dict, start=1):
     strings.append(sentence_string)
 sentence_info = '\n'.join(strings)
 
-video_text = ':blue[This text is blue.]' + video_text
-
 with st.container(height=300):
-    st.markdown(video_text)
+    text_slot = st.empty()
+    text_slot.markdown(st.session_state.video_text)
+
+if st.button("Smart text suggestions"):
+    st.session_state.video_text = st.session_state.video_text_original
+    threshold = 7
+    colors = ['blue', 'violet']
+    #paragraphs = text_to_paragraph(video_text)
+    highlights = 0
+    # TODO remove
+    paragraphs = [{'paragraph': 'One so child came to visit his grandfather during his summer holidays. He used to play with his grandpa all the time. One day he said to his grandpa, When I grow up, I want to become a successful man. Can you tell me some ways to be successful? Grandfather nodded. Yes. And took the boy with him to a nearby nursery.', 'score': 8}, {'paragraph': 'From nursery, his grandpa bought two small plants and came back home. Then he planted one plant in a pot and kept it inside the house and planted another one outside the house. What do you think? Which of these two plants will grow better in future? Grandfather asked the boy. Boy, kept thinking for some time and then said, The plant inside the house will grow better because it is safe from every danger while the plant outside is at risk of many things like strong sunlight, storms, animals, etc.', 'score': 7}, {'paragraph': "Grandfather smiled and said, Let's see what happens in future. After that boy left with his parents. After four years, Boy came to visit his grandfather again when the boy saw his grandfather.", 'score': 6}]
+    for entry in paragraphs:
+        if threshold and entry["score"] < threshold:
+            continue
+        if entry["paragraph"] in st.session_state.video_text:
+            st.session_state.video_text = text_add_color(st.session_state.video_text, entry["paragraph"],
+                                                         color=colors[highlights % 2])
+            highlights += 1
+    if highlights > 0:
+        st.success(f"Individuated {highlights} suggestions!")
+    else:
+        st.warning(f"No available suggestions!")
+    text_slot.markdown(st.session_state.video_text)
 
 with st.expander('Expand to see sentence level timestamps', expanded=False):
     st.markdown(sentence_info)
