@@ -19,6 +19,7 @@ from functions.text_to_paragraph import text_to_paragraph
 from functions.streamlit_utils import text_add_color
 from PIL import Image
 from random import randint
+from streamlit_components.srt_editor import srt_editor
 
 
 def display_video(url):
@@ -62,10 +63,9 @@ if st.button("Smart text suggestions"):
     st.session_state.video_text = st.session_state.video_text_original
     threshold = 7
     colors = ['blue', 'violet']
-    #paragraphs = text_to_paragraph(video_text)
+    paragraphs = text_to_paragraph(st.session_state.video_text)
     highlights = 0
-    # TODO remove
-    paragraphs = [{'paragraph': 'One so child came to visit his grandfather during his summer holidays. He used to play with his grandpa all the time. One day he said to his grandpa, When I grow up, I want to become a successful man. Can you tell me some ways to be successful? Grandfather nodded. Yes. And took the boy with him to a nearby nursery.', 'score': 8}, {'paragraph': 'From nursery, his grandpa bought two small plants and came back home. Then he planted one plant in a pot and kept it inside the house and planted another one outside the house. What do you think? Which of these two plants will grow better in future? Grandfather asked the boy. Boy, kept thinking for some time and then said, The plant inside the house will grow better because it is safe from every danger while the plant outside is at risk of many things like strong sunlight, storms, animals, etc.', 'score': 7}, {'paragraph': "Grandfather smiled and said, Let's see what happens in future. After that boy left with his parents. After four years, Boy came to visit his grandfather again when the boy saw his grandfather.", 'score': 6}]
+    #paragraphs = [{'paragraph': 'One so child came to visit his grandfather during his summer holidays. He used to play with his grandpa all the time. One day he said to his grandpa, When I grow up, I want to become a successful man. Can you tell me some ways to be successful? Grandfather nodded. Yes. And took the boy with him to a nearby nursery.', 'score': 8}, {'paragraph': 'From nursery, his grandpa bought two small plants and came back home. Then he planted one plant in a pot and kept it inside the house and planted another one outside the house. What do you think? Which of these two plants will grow better in future? Grandfather asked the boy. Boy, kept thinking for some time and then said, The plant inside the house will grow better because it is safe from every danger while the plant outside is at risk of many things like strong sunlight, storms, animals, etc.', 'score': 7}, {'paragraph': "Grandfather smiled and said, Let's see what happens in future. After that boy left with his parents. After four years, Boy came to visit his grandfather again when the boy saw his grandfather.", 'score': 6}]
     for entry in paragraphs:
         if threshold and entry["score"] < threshold:
             continue
@@ -164,6 +164,7 @@ if st.session_state.crop_video_path:
     cols[1].video(st.session_state.crop_video_path)
 
 if st.session_state.crop_video_path:
+    subtitles = audio_transcription_to_subtitle(transcription_path, output_format="srt")
     st.session_state.video_captions_path = None
     # Add a color picker for font color
     font_color = st.color_picker("Choose font color", '#ffff00')  # Initial color is yellow
@@ -221,10 +222,11 @@ if st.session_state.crop_video_path:
             position=caption_position_key)
         cols3 = st.columns((1, 2, 1))
         cols3[1].image(captions_thumbnail_path)
-        #st.write(f'<span style="font-family: {font_path}; font-size: {font_size}px; color: {font_color}">{preview_text}</span>', unsafe_allow_html=True)
+
+    with st.expander('Expand edit captions', expanded=False):
+        srt_editor(subtitles, output_file=subtitles)
 
     if st.button("Make captions"):
-        subtitles = audio_transcription_to_subtitle(transcription_path, output_format="srt")
         video_captions_path = video_add_captions(
             subtitles, st.session_state.crop_video_path,
             color=font_color, fontsize=font_size, remove_punctuation=remove_punctuation, font=font_path,
