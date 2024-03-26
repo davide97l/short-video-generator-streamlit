@@ -2,7 +2,7 @@ from pytube import YouTube
 import os
 
 
-def download_video_youtube(url, resolution=None, path='.', filename=None):
+def download_video_youtube(url, resolution=None, path='.'):
     try:
         # Create a YouTube object
         yt = YouTube(url)
@@ -21,18 +21,13 @@ def download_video_youtube(url, resolution=None, path='.', filename=None):
 
         # Download the video
         download_filename = stream.download(output_path=path)
-
-        # Rename the file if a filename was provided
-        if filename is not None:
-            base, ext = os.path.splitext(download_filename)
-            new_filename = os.path.join(path, f"{filename}{ext}")
-            os.rename(download_filename, new_filename)
-            print(f"Video downloaded and renamed to {filename}")
-
-        else:
-            print(f"Video downloaded successfully at {path}")
+        base, ext = os.path.splitext(download_filename)
+        filename = download_filename
+        new_filename = os.path.join(path, f"{filename.replace(' ', '_')}{ext}")
+        os.rename(download_filename, new_filename)
+        print(f"Video downloaded and renamed to {filename}")
+        return new_filename
 
     except Exception as e:
         print(f"An error occurred: {e}")
 
-    return new_filename

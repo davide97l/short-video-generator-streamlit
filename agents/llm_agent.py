@@ -75,10 +75,10 @@ class LLMAgent:
 
         return {
             "response": response.content,
-            "total_tokens": cb.total_tokens if 'total_tokens' in cb else None,
-            "prompt_tokens": cb.prompt_tokens if 'prompt_tokens' in cb else None,
-            "completion_tokens": cb.completion_tokens if 'completion_tokens' in cb else None,
-            "total_cost": cb.total_cost if 'total_cost' in cb else None,
+            "total_tokens": cb.total_tokens if self.llm_provider == "chat_openai" else None,
+            "prompt_tokens": cb.prompt_tokens if self.llm_provider == "chat_openai" else None,
+            "completion_tokens": cb.completion_tokens if self.llm_provider == "chat_openai" else None,
+            "total_cost": cb.total_cost if self.llm_provider == "chat_openai" else None,
         }
 
 
