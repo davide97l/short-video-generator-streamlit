@@ -8,7 +8,7 @@ def image_add_captions(image_path: str, text: str, output_path: str = None,
                        caption_width=100, position='center', remove_punctuation=False):
     # Load image
     image_clip = ImageClip(image_path).set_duration(0.01)
-    image_width, _ = image_clip.size
+    image_width, image_height = image_clip.size
 
     # Define the TextClip
     caption_width_pixels = int(image_width * caption_width / 100)
@@ -18,6 +18,10 @@ def image_add_captions(image_path: str, text: str, output_path: str = None,
     text_clip = TextClip(text, font=font, fontsize=fontsize, color=color, method='caption', align='center', size=size).set_duration(image_clip.duration)
 
     # Create a composite video clip with image and text layered
+    if position == 'third_quarter':
+        position = (0, image_height * 3 / 4)
+    elif position == 'first_quarter':
+        position = (0, image_height * 1 / 4)
     final_clip = CompositeVideoClip([image_clip, text_clip.set_pos(position)])
 
     # Set output path if not provided
@@ -30,9 +34,10 @@ def image_add_captions(image_path: str, text: str, output_path: str = None,
     return output_path
 
 
-'''font = '../fonts/LEMONMILK-Regular.otf'
-subtitle_path = "../data/audio_transcription.srt"
-video_path = "../data/youtube_videoooo.jpg"
+if __name__ == '__main__':
+    font = '../fonts/LEMONMILK-Regular.otf'
+    subtitle_path = "../data/audio_transcription.srt"
+    video_path = "../data/youtube_videoooo.jpg"
 
-x = video_add_caption_to_first_frame(video_path, 'hello world', font=font, remove_punctuation=False, color='#ffffff')
-print(x)'''
+    x = image_add_captions(video_path, 'hello world', font=font, remove_punctuation=False, color='#ffffff', position='third_quarter')
+    print(x)

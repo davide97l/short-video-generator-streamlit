@@ -2,6 +2,7 @@ import streamlit as st
 import re
 import os
 
+
 def parse_srt(srt_text):
     """Parses SRT text into a list of dictionaries."""
     srt_data = []
@@ -16,6 +17,7 @@ def parse_srt(srt_text):
         })
     return srt_data
 
+
 def format_srt(srt_data):
     """Formats SRT data back into SRT text."""
     srt_text = ""
@@ -23,15 +25,37 @@ def format_srt(srt_data):
         srt_text += f"{item['sequence_number']}\n{item['start_time']} --> {item['end_time']}\n{item['sentence']}\n\n"
     return srt_text
 
-def edit_srt(srt_data):
+
+def parse_srt_time(time_str):
+    """Parses SRT time format string ("hh:mm:ss,ms") into seconds (integer)."""
+    hours, minutes, seconds_ms = time_str.split(':')  # Split by ':' only once
+    seconds, milliseconds = seconds_ms.split(',')  # Split seconds and milliseconds by ','
+    hours = int(hours)  # Convert hours to integer
+    minutes = int(minutes)  # Convert minutes to integer
+    seconds = int(seconds)  # Convert seconds to integer
+    milliseconds = int(milliseconds)  # Convert milliseconds to integer
+    return hours * 3600 + minutes * 60 + seconds + milliseconds // 1000
+
+
+def edit_srt(srt_data, time_range=(None, None)):
     """Edits SRT data based on user modifications."""
     for item in srt_data:
-        new_sentence = st.text_input(f"Sentence {item['sequence_number']}: {str(item['start_time']).split(',')[0]} -->"
-                                     f" {str(item['end_time']).split(',')[0]}", item["sentence"])
+        # Convert start_time and end_time to seconds (integers) for efficient comparison
+        item['start_time_seconds'] = parse_srt_time(item['start_time'])
+        item['end_time_seconds'] = parse_srt_time(item['end_time'])
+
+        if time_range[0] and item['end_time_seconds'] <= time_range[0]:
+            continue
+        if time_range[1] and item['start_time_seconds'] >= time_range[1]:
+            continue
+
+        new_sentence = st.text_input(f"Sentence {item['sequence_number']}: {item['start_time']} -->"
+                                     f" {item['end_time']}", item["sentence"])
         if new_sentence:
             item["sentence"] = new_sentence.strip()
 
-def srt_editor(input_file, output_file=None):
+
+def srt_editor(input_file, output_file=None, time_range=(None, None)):
     """Reusable Streamlit component for SRT file editing."""
 
     # Option 1: Specify a default file path
@@ -45,7 +69,7 @@ def srt_editor(input_file, output_file=None):
             return
 
     if srt_data:
-        edit_srt(srt_data)
+        edit_srt(srt_data, time_range)
 
         if st.button("Save Changes"):
             # Modify these paths as needed for saving

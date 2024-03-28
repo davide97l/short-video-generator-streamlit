@@ -16,7 +16,7 @@ from functions.audio_transcription_to_subtitle import audio_transcription_to_sub
 from functions.image_add_captions import image_add_captions
 from streamlit_cropper import st_cropper
 from functions.text_to_paragraph import text_to_paragraph
-from functions.streamlit_utils import text_add_color, has_paired_file
+from functions.streamlit_utils import text_add_color, has_paired_file, box_algorithm
 from PIL import Image
 from random import randint
 from streamlit_components.srt_editor import srt_editor
@@ -32,7 +32,8 @@ st.session_state.video_url = st.text_input("Enter Video URL")
 
 # -----DOWNLOAD VIDEO------------------------------------------------------------------------
 #if 'video_url' in st.session_state and st.session_state.video_url is not None:
-    #st.session_state.video_path = download_video_youtube(st.session_state.video_url, path='data2')
+    #with st.spinner('Downloading video...'):
+        #st.session_state.video_path = download_video_youtube(st.session_state.video_url, path='data2')
 st.session_state.video_path = "data2/These_5_Books_Scaled_My_Business_to_Multiple_6_Figures.mp4"  #TODO keep for test
 
 # -----TRANSCRIPT VIDEO------------------------------------------------------------------------
@@ -45,8 +46,9 @@ if 'video_path' in st.session_state and st.session_state.video_path is not None:
             st.session_state.audio_path = extract_audio_video(st.session_state.video_path)
 
     if 'transcription_path' not in st.session_state and 'audio_path' in st.session_state:
-        with st.spinner('Processing video transcription...'):
-            st.session_state.transcription_path = audio_transcription(st.session_state.audio_path)
+        #with st.spinner('Processing video transcription...'):
+        #    st.session_state.transcription_path = audio_transcription(st.session_state.audio_path)
+        st.session_state.transcription_path = 'data2/These_5_Books_Scaled_My_Business_to_Multiple_6_Figures.json'
         #sentence_dict = audio_transcription_to_sentence_dict(st.session_state.transcription_path)
         #strings = []
         #for i, sentence in enumerate(sentence_dict, start=1):
@@ -84,8 +86,8 @@ if 'video_text' in st.session_state:
             st.warning(f"No available suggestions!")
         text_slot.markdown(st.session_state.video_text)
 
-    # -----CROP VIDEO LENGTH------------------------------------------------------------------------
-    st.header("Crop video length")
+    # -----TRIM VIDEO LENGTH------------------------------------------------------------------------
+    st.header("Trim video length")
     extracted_text = st.text_input("Paste extracted text here")
 
     if "start" not in st.session_state:
@@ -143,10 +145,10 @@ if 'sub_video' in st.session_state and st.session_state.sub_video is not None:
         img = Image.open(st.session_state.img_file)
         # Get a cropped image from the frontend
         cropped_img, box = st_cropper(img, realtime_update=realtime_update, box_color='#0000FF',
-                                      aspect_ratio=aspect_ratio, return_type='both')
+                                      aspect_ratio=aspect_ratio, return_type='both', box_algorithm=box_algorithm)
 
         # Manipulate cropped image at will
-        _ = cropped_img.thumbnail((150,150))
+        _ = cropped_img.thumbnail((150, 150))
         st.image(cropped_img)
 
         if 'crop_video_path' not in st.session_state:
@@ -161,18 +163,19 @@ if 'sub_video' in st.session_state and st.session_state.sub_video is not None:
         cols[1].video(st.session_state.crop_video_path)
 
 # -----VIDEO CAPTIONS------------------------------------------------------------------------
-print(st.session_state)
 if 'crop_video_path' in st.session_state and 'transcription_path' in st.session_state and\
         st.session_state.crop_video_path is not None:
     st.header("Video captions")
     subtitles = audio_transcription_to_subtitle(st.session_state.transcription_path, output_format="srt")
-    st.session_state.video_captions_path = None
+    if 'video_captions_path' not in st.session_state:
+        st.session_state.video_captions_path = None
     # Add a color picker for font color
     font_color = st.color_picker("Choose font color", '#ffff00')  # Initial color is yellow
     # Add a slider for font size
     font_size = st.slider("Font size", min_value=0, max_value=120, value=24, step=12)
     # Caption position mapping with renaming dictionary
-    caption_options = {"center": "Center", "top": "Top", "bottom": "Bottom"}
+    caption_options = {"center": "Center", "top": "Top", "first_quarter": "First quarter",
+                       "third_quarter": "Third quarter", "bottom": "Bottom"}
     caption_position = st.radio("Caption Position", list(caption_options.values()))
     # Display caption position selection (optional)
     caption_position_key = list(caption_options.keys())[list(caption_options.values()).index(caption_position)]
@@ -225,7 +228,7 @@ if 'crop_video_path' in st.session_state and 'transcription_path' in st.session_
         cols3[1].image(captions_thumbnail_path)
 
     with st.expander('Expand edit captions', expanded=False):
-        srt_editor(subtitles, output_file=subtitles)
+        srt_editor(subtitles, output_file=subtitles, time_range=(st.session_state.start, st.session_state.end))
 
     if st.button("Make captions"):
         with st.spinner('Adding captions...'):
@@ -234,7 +237,6 @@ if 'crop_video_path' in st.session_state and 'transcription_path' in st.session_
                 color=font_color, fontsize=font_size, remove_punctuation=remove_punctuation, font=font_path,
                 position=caption_position_key)
         st.session_state.video_captions_path = video_captions_path
-        print('vcp',st.session_state.video_captions_path)
 
 if 'video_captions_path' in st.session_state and st.session_state.video_captions_path is not None:
     cols2 = st.columns((1, 2, 1))
