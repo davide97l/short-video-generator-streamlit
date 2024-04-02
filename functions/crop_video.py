@@ -24,12 +24,7 @@ def crop_video(input_video_path, x, y, width, height, output_video_path=None):
         name, ext = os.path.splitext(base_name)
         output_video_path = os.path.join(
             os.path.dirname(input_video_path),
-            "{name}_cropped{ext}".format(
-                name=name,
-                new_width=right-left,
-                new_height=bottom-top,
-                ext=ext
-            )
+            f"{name}_crop_{x}_{y}_{width}_{height}{ext}"
         )
 
     # Write the output file

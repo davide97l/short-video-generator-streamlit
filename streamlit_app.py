@@ -19,8 +19,14 @@ from functions.text_to_paragraph import text_to_paragraph
 from functions.subtitles_trim import subtitles_trim
 from functions.streamlit_utils import text_add_color, has_paired_file, box_algorithm
 from PIL import Image
-from random import randint
 from streamlit_components.srt_editor import srt_editor
+
+
+# ----OPTIONS-------------
+cache_max_entries = 10
+cache_ttl = None
+cache_show_spinner = None
+# ------------------------
 
 
 def display_video(url):
@@ -31,11 +37,17 @@ def display_video(url):
 st.title("Short Video Generator")
 st.session_state.video_url = st.text_input("Enter Video URL")
 
+
 # -----DOWNLOAD VIDEO------------------------------------------------------------------------
-#if 'video_url' in st.session_state and st.session_state.video_url is not None:
-    #with st.spinner('Downloading video...'):
-        #st.session_state.video_path = download_video_youtube(st.session_state.video_url, path='data2')
-st.session_state.video_path = "data2/These_5_Books_Scaled_My_Business_to_Multiple_6_Figures.mp4"  #TODO keep for test
+@st.cache_data(max_entries=cache_max_entries, ttl=cache_ttl, show_spinner=cache_show_spinner)
+def cached_download_video(video_url, save_path):
+    return download_video_youtube(video_url, path=save_path)
+
+
+if 'video_url' in st.session_state and st.session_state.video_url is not None:
+    with st.spinner('Downloading video...'):
+        st.session_state.video_path = cached_download_video(st.session_state.video_url, 'data2')
+        print('vb', st.session_state.video_path)
 
 # -----TRANSCRIPT VIDEO------------------------------------------------------------------------
 if 'video_path' in st.session_state and st.session_state.video_path is not None:
@@ -43,13 +55,19 @@ if 'video_path' in st.session_state and st.session_state.video_path is not None:
     st.session_state.max_video_duration = video_duration(st.session_state.video_path)
 
     if 'audio_path' not in st.session_state:
+        @st.cache_data(max_entries=cache_max_entries, ttl=cache_ttl, show_spinner=cache_show_spinner)
+        def cached_extract_audio_video(video_path):
+            return extract_audio_video(video_path)
         if not has_paired_file(st.session_state.video_path, 'mp3'):
-            st.session_state.audio_path = extract_audio_video(st.session_state.video_path)
+            st.session_state.audio_path = cached_extract_audio_video(st.session_state.video_path)
 
     if 'transcription_path' not in st.session_state and 'audio_path' in st.session_state:
-        #with st.spinner('Processing video transcription...'):
-        #    st.session_state.transcription_path = audio_transcription(st.session_state.audio_path)
-        st.session_state.transcription_path = 'data2/These_5_Books_Scaled_My_Business_to_Multiple_6_Figures.json'
+        @st.cache_data(max_entries=cache_max_entries, ttl=cache_ttl, show_spinner=cache_show_spinner)
+        def cached_audio_transcription(audio_path):
+            return audio_transcription(audio_path)
+        with st.spinner('Processing video transcription...'):
+            st.session_state.transcription_path = cached_audio_transcription(st.session_state.audio_path)
+
         sentence_dict = audio_transcription_to_sentence_dict(st.session_state.transcription_path)
         strings = []
         for i, sentence in enumerate(sentence_dict, start=1):
