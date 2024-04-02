@@ -16,3 +16,9 @@ def substring_start_end_in_transcription(audio_transcription, substring):
             return words_with_time[i]['start'], words_with_time[i+target_len-1]['end']
 
     return -1, -1
+
+
+if __name__ == '__main__':
+    audio_transcription = '../data2/These_5_Books_Scaled_My_Business_to_Multiple_6_Figures.json'
+    substring = "You just need to know how people think. And that's literally it besties the six books that help me go from zero to 100,000 dollar months in on the two years. It may be a secret weapon for me, but as I reminded from me to you, stop reading, just read, start reading to act. In this era of new education, we don't wait to get tested. We test ourselves. See you in the next video."
+    x = substring_start_end_in_transcription(audio_transcription, substring)

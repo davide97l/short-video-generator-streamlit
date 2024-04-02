@@ -16,6 +16,7 @@ from functions.audio_transcription_to_subtitle import audio_transcription_to_sub
 from functions.image_add_captions import image_add_captions
 from streamlit_cropper import st_cropper
 from functions.text_to_paragraph import text_to_paragraph
+from functions.subtitles_trim import subtitles_trim
 from functions.streamlit_utils import text_add_color, has_paired_file, box_algorithm
 from PIL import Image
 from random import randint
@@ -49,12 +50,15 @@ if 'video_path' in st.session_state and st.session_state.video_path is not None:
         #with st.spinner('Processing video transcription...'):
         #    st.session_state.transcription_path = audio_transcription(st.session_state.audio_path)
         st.session_state.transcription_path = 'data2/These_5_Books_Scaled_My_Business_to_Multiple_6_Figures.json'
-        #sentence_dict = audio_transcription_to_sentence_dict(st.session_state.transcription_path)
-        #strings = []
-        #for i, sentence in enumerate(sentence_dict, start=1):
-        #    sentence_string = f"{i}) S:{int(sentence['start'])}s | E:{int(sentence['end'])}s | D:{int(sentence['duration'])}s | {sentence['text']}"
-        #    strings.append(sentence_string)
-        #sentence_info = '\n'.join(strings)
+        sentence_dict = audio_transcription_to_sentence_dict(st.session_state.transcription_path)
+        strings = []
+        for i, sentence in enumerate(sentence_dict, start=1):
+            sentence_string = f"{i}) S:{int(sentence['start'])}s | E:{int(sentence['end'])}s | D:{int(sentence['duration'])}s | {sentence['text']}"
+            strings.append(sentence_string)
+        sentence_info = '\n'.join(strings)
+
+        with st.expander('Expand to see sentence level timestamps', expanded=False):
+            st.markdown(sentence_info)
 
     if 'video_text' not in st.session_state and 'transcription_path' in st.session_state:
         st.session_state.video_text = audio_transcription_to_text(st.session_state.transcription_path)
@@ -88,7 +92,7 @@ if 'video_text' in st.session_state:
 
     # -----TRIM VIDEO LENGTH------------------------------------------------------------------------
     st.header("Trim video length")
-    extracted_text = st.text_input("Paste extracted text here")
+    st.session_state.extracted_text = st.text_input("Paste extracted text here (no split words)")
 
     if "start" not in st.session_state:
         st.session_state.start = 0.
@@ -98,14 +102,19 @@ if 'video_text' in st.session_state:
         st.session_state.sub_video = st.session_state.video_path
 
     if st.button("Extract short video from transcription text"):
-        if not extracted_text:
+        if 'extracted_text' not in st.session_state or not st.session_state.extracted_text:
             st.warning("No extracted text provided!")
         else:
-            st.session_state.start, st.session_state.end = substring_start_end_in_transcription(st.session_state.transcription_path, extracted_text)
-            with st.spinner('Trimming video...'):
-                st.session_state.sub_video = split_video_intervals(st.session_state.video_path, [st.session_state.start, st.session_state.end],
-                                                                   keep_excluded_intervals=False)[0]
-            st.success("Video Trimmed Successfully!")
+            temp_start, temp_end = st.session_state.start, st.session_state.end
+            try:
+                st.session_state.start, st.session_state.end = substring_start_end_in_transcription(st.session_state.transcription_path, st.session_state.extracted_text)
+                with st.spinner('Trimming video...'):
+                    st.session_state.sub_video = split_video_intervals(st.session_state.video_path, [st.session_state.start, st.session_state.end],
+                                                                       keep_excluded_intervals=False)[0]
+                    st.success("Video Trimmed Successfully!")
+            except Exception as e:
+                st.warning(f"Could find selected text from video transcription. Make sure not to split words.")
+                st.session_state.start, st.session_state.end = temp_start, temp_end
 
     st.session_state.start = st.slider("Start Time (seconds)", min_value=0., max_value=st.session_state.max_video_duration, format="%f", value=st.session_state.start, step=0.1)
     st.session_state.end = st.slider("End Time (seconds)", min_value=0., max_value=st.session_state.max_video_duration, format="%f", value=st.session_state.end, step=0.1)
@@ -167,6 +176,7 @@ if 'crop_video_path' in st.session_state and 'transcription_path' in st.session_
         st.session_state.crop_video_path is not None:
     st.header("Video captions")
     subtitles = audio_transcription_to_subtitle(st.session_state.transcription_path, output_format="srt")
+    trimmed_subtitles = subtitles_trim(subtitles, st.session_state.start, st.session_state.end)
     if 'video_captions_path' not in st.session_state:
         st.session_state.video_captions_path = None
     # Add a color picker for font color
@@ -228,12 +238,12 @@ if 'crop_video_path' in st.session_state and 'transcription_path' in st.session_
         cols3[1].image(captions_thumbnail_path)
 
     with st.expander('Expand edit captions', expanded=False):
-        srt_editor(subtitles, output_file=subtitles, time_range=(st.session_state.start, st.session_state.end))
+        srt_editor(trimmed_subtitles, output_file=trimmed_subtitles, time_range=(None, None))
 
     if st.button("Make captions"):
         with st.spinner('Adding captions...'):
             video_captions_path = video_add_captions(
-                subtitles, st.session_state.crop_video_path,
+                trimmed_subtitles, st.session_state.crop_video_path,
                 color=font_color, fontsize=font_size, remove_punctuation=remove_punctuation, font=font_path,
                 position=caption_position_key)
         st.session_state.video_captions_path = video_captions_path

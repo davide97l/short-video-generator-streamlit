@@ -8,8 +8,20 @@ def audio_transcription_to_words(json_file_path, output_file=None):
 
     words = []
     for segment in data["segments"]:
-        for word in segment["words"]:
-            words.append({"word": word["word"], "start": word["start"], "end": word["end"]})
+        reference_words = segment["text"].split()
+        i, j = 0, 0
+        while i < len(segment["words"]):
+            word = segment["words"][i]["word"].strip()
+            x = 0
+            while reference_words[j] != word:
+                i += 1
+                if i >= len(segment["words"]):
+                    break
+                word += segment["words"][i]["word"]
+                x += 1
+            words.append({"word": word, "start": segment["words"][i-x]["start"], "end": segment["words"][i]["end"]})
+            i += 1
+            j += 1
 
     if output_file:
         with open(output_file, 'w') as f:
