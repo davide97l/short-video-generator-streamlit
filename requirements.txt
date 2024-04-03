@@ -5,5 +5,5 @@ openai-whisper
 moviepy
 pytube
 pysrt
-opencv-python
+opencv-python-headless
 python-dotenv
