@@ -1,0 +1,9 @@
+streamlit
+pillow
+langchain
+openai-whisper
+moviepy
+pytube
+pysrt
+opencv-python
+python-dotenv

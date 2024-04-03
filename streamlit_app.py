@@ -29,6 +29,7 @@ cache_max_entries = 10
 cache_ttl = None
 cache_show_spinner = False
 data_folder = 'data'
+font_folder = "fonts"
 
 # ---SIDE BAR
 
@@ -240,7 +241,6 @@ if 'crop_video_path' in st.session_state and 'transcription_path' in st.session_
     remove_punctuation = cols3[0].checkbox("Remove punctuation", value=False)  # Default checked
 
     # Get available fonts from the "font" folder
-    font_folder = "fonts"  # Replace with your actual folder path
     font_files = [f for f in os.listdir(font_folder) if f.endswith((".ttf", ".otf"))]
     # Extract font names without extensions
     available_fonts = [os.path.splitext(f)[0] for f in font_files]  # Get filename without extension
