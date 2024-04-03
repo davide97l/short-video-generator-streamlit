@@ -18,6 +18,8 @@ from streamlit_cropper import st_cropper
 from functions.text_to_paragraph import text_to_paragraph
 from functions.subtitles_trim import subtitles_trim
 from functions.streamlit_utils import text_add_color, has_paired_file, box_algorithm
+from functions.longest_common_substring import longest_common_substring
+from functions.subtitles_modify_row import subtitles_modify_row
 from PIL import Image
 from streamlit_components.srt_editor import srt_editor
 
@@ -25,7 +27,7 @@ from streamlit_components.srt_editor import srt_editor
 # ----OPTIONS-------------
 cache_max_entries = 10
 cache_ttl = None
-cache_show_spinner = None
+cache_show_spinner = False
 # ------------------------
 
 
@@ -45,7 +47,7 @@ def cached_download_video(video_url, save_path):
 
 
 if 'video_url' in st.session_state and st.session_state.video_url is not None:
-    with st.spinner('Downloading video...'):
+    with st.spinner('Downloading video (this may take a while according to the size of video)...'):
         st.session_state.video_path = cached_download_video(st.session_state.video_url, 'data2')
         print('vb', st.session_state.video_path)
 
@@ -195,6 +197,18 @@ if 'crop_video_path' in st.session_state and 'transcription_path' in st.session_
     st.header("Video captions")
     subtitles = audio_transcription_to_subtitle(st.session_state.transcription_path, output_format="srt")
     trimmed_subtitles = subtitles_trim(subtitles, st.session_state.start, st.session_state.end)
+    if 'extracted_text' in st.session_state and st.session_state.extracted_text is not None:
+        subtitles_first_row = subtitles_modify_row(trimmed_subtitles, 0)[-1]
+        subtitles_last_row = subtitles_modify_row(trimmed_subtitles, -1)[-1]
+        print(subtitles_first_row)
+        print(subtitles_last_row)
+        first_row = longest_common_substring(subtitles_first_row, st.session_state.extracted_text)
+        last_row = longest_common_substring(subtitles_last_row, st.session_state.extracted_text)
+        print(st.session_state.extracted_text)
+        print(first_row)
+        print(last_row)
+        trimmed_subtitles = subtitles_modify_row(trimmed_subtitles, 0, first_row)[0]
+        trimmed_subtitles = subtitles_modify_row(trimmed_subtitles, -1, last_row)[0]
     if 'video_captions_path' not in st.session_state:
         st.session_state.video_captions_path = None
     # Add a color picker for font color
