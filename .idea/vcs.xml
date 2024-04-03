@@ -3,6 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ai_flow" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/obsolete/website/tripadvisor-scraper" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/tripadvisor-scraper" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/website/tripadvisor-scraper" vcs="Git" />
   </component>
