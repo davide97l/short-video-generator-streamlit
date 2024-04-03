@@ -68,15 +68,17 @@ def srt_editor(input_file, output_file=None, time_range=(None, None)):
             st.error("File not found. Please check the default path.")
             return
 
+    if not output_file:
+        input_filepath = os.path.abspath(os.path.expanduser(os.path.expandvars(input_file)))
+        base, ext = os.path.splitext(input_filepath)
+        output_file = base + ext
+
     if srt_data:
         edit_srt(srt_data, time_range)
 
         if st.button("Save Changes"):
             # Modify these paths as needed for saving
-            if not output_file:
-                input_filepath = os.path.abspath(os.path.expanduser(os.path.expandvars(input_file)))
-                base, ext = os.path.splitext(input_filepath)
-                output_file = base + "_mod" + ext
             with open(output_file, "w", encoding="utf-8") as f:
                 f.write(format_srt(srt_data))
             st.success("File saved successfully!")
+    return output_file

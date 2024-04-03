@@ -103,26 +103,25 @@ if 'video_text' in st.session_state:
         st.markdown(st.session_state.sentence_info)
 
 # -----HIGHLIGHT PARAGRAPHS------------------------------------------------------------------------
-
-    #if st.button("Smart text suggestions"):
-    #    st.session_state.video_text = st.session_state.video_text_original
-    #    threshold = 7
-    #    colors = ['blue', 'violet']
-    #    with st.spinner('Selecting interesting parts...'):
-    #        paragraphs = text_to_paragraph(st.session_state.video_text)
-    #    highlights = 0
-    #    for entry in paragraphs:
-    #        if threshold and entry["score"] < threshold:
-    #            continue
-    #        if entry["paragraph"] in st.session_state.video_text:
-    #            st.session_state.video_text = text_add_color(st.session_state.video_text, entry["paragraph"],
-    #                                                         color=colors[highlights % 2])
-    #            highlights += 1
-    #    if highlights > 0:
-    #        st.success(f"Individuated {highlights} suggestions!")
-    #    else:
-    #        st.warning(f"No available suggestions!")
-    #    text_slot.markdown(st.session_state.video_text)
+    if st.button("Smart text suggestions"):
+        st.session_state.video_text = st.session_state.video_text_original
+        threshold = 7
+        colors = ['blue', 'violet']
+        with st.spinner('Selecting interesting parts...'):
+            paragraphs = text_to_paragraph(st.session_state.video_text)
+        highlights = 0
+        for entry in paragraphs:
+            if threshold and entry["score"] < threshold:
+                continue
+            if entry["paragraph"] in st.session_state.video_text:
+                st.session_state.video_text = text_add_color(st.session_state.video_text, entry["paragraph"],
+                                                             color=colors[highlights % 2])
+                highlights += 1
+        if highlights > 0:
+            st.success(f"Individuated {highlights} suggestions!")
+        else:
+            st.warning(f"No available suggestions!")
+        text_slot.markdown(st.session_state.video_text)
 
 # -----TRIM VIDEO LENGTH------------------------------------------------------------------------
 
@@ -216,14 +215,14 @@ if 'crop_video_path' in st.session_state and 'transcription_path' in st.session_
         st.session_state.crop_video_path is not None:
     st.header("Video captions")
     subtitles = audio_transcription_to_subtitle(st.session_state.transcription_path, output_format="srt")
-    trimmed_subtitles = subtitles_trim(subtitles, st.session_state.start, st.session_state.end)
+    st.session_state.trimmed_subtitles = subtitles_trim(subtitles, st.session_state.start, st.session_state.end)
     if 'extracted_text' in st.session_state and len(st.session_state.extracted_text) > 1:
-        subtitles_first_row = subtitles_modify_row(trimmed_subtitles, 0)[-1]
-        subtitles_last_row = subtitles_modify_row(trimmed_subtitles, -1)[-1]
+        subtitles_first_row = subtitles_modify_row(st.session_state.trimmed_subtitles, 0)[-1]
+        subtitles_last_row = subtitles_modify_row(st.session_state.trimmed_subtitles, -1)[-1]
         first_row = longest_common_substring(subtitles_first_row, st.session_state.extracted_text)
         last_row = longest_common_substring(subtitles_last_row, st.session_state.extracted_text)
-        trimmed_subtitles = subtitles_modify_row(trimmed_subtitles, 0, first_row)[0]
-        trimmed_subtitles = subtitles_modify_row(trimmed_subtitles, -1, last_row)[0]
+        st.session_state.trimmed_subtitles = subtitles_modify_row(st.session_state.trimmed_subtitles, 0, first_row)[0]
+        st.session_state.trimmed_subtitles = subtitles_modify_row(st.session_state.trimmed_subtitles, -1, last_row)[0]
     if 'video_captions_path' not in st.session_state:
         st.session_state.video_captions_path = None
     cols3 = st.columns((1, 1))
@@ -283,13 +282,15 @@ if 'crop_video_path' in st.session_state and 'transcription_path' in st.session_
             position=caption_position_key)
         cols3[1].image(captions_thumbnail_path)
 
-    with st.expander('Expand edit captions', expanded=False):
-        srt_editor(trimmed_subtitles, output_file=trimmed_subtitles, time_range=(None, None))
+    if 'trimmed_subtitles' in st.session_state:
+        with st.expander('Expand edit captions', expanded=False):
+            st.session_state.trimmed_subtitles = srt_editor(st.session_state.trimmed_subtitles, time_range=(None, None))
 
     if st.button("Make captions"):
         with st.spinner('Adding captions...'):
+            #subtitles = st.session_state.edited_subtitles if 'edited_subtitles' in st.session_state and st.session_state.edited_subtitles is not None else st.session_state.trimmed_subtitles
             video_captions_path = video_add_captions(
-                trimmed_subtitles, st.session_state.crop_video_path,
+                st.session_state.trimmed_subtitles, st.session_state.crop_video_path,
                 color=font_color, fontsize=font_size, remove_punctuation=remove_punctuation, font=font_path,
                 position=caption_position_key)
             st.success("Video Captions added successfully!")
