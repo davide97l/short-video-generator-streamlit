@@ -7,3 +7,4 @@ pytube
 pysrt
 opencv-python-headless
 python-dotenv
+streamlit-cropper
