@@ -30,6 +30,7 @@ cache_ttl = None
 cache_show_spinner = False
 data_folder = 'data'
 font_folder = "fonts"
+st.set_page_config(page_title="Short Video Generator", initial_sidebar_state="collapsed")
 
 # ---SIDE BAR
 
@@ -44,6 +45,11 @@ if st.sidebar.button("Clear Cache"):
         st.error(f"An error occurred: {e}")
     st.rerun()
 
+openai_key = st.sidebar.text_input("Enter your OpenAI API key")
+if openai_key != "":
+    os.environ['OPENAI_API_KEY'] = openai_key
+    st.sidebar.success("OpenAI API key set!")
+
 # -----DOWNLOAD VIDEO------------------------------------------------------------------------
 
 st.title("Short Video Generator")
@@ -57,7 +63,7 @@ st.session_state.video_url = st.text_input(
 def cached_download_video(video_url, save_path):
     return download_video_youtube(video_url, path=save_path)
 
-#st.session_state.video_url='https://www.youtube.com/watch?v=kNMlvVCc6es'
+#st.session_state.video_url='https://www.youtube.com/watch?v=kNMlvVCc6es' # keep for testing
 
 if 'video_url' in st.session_state and st.session_state.video_url is not None:
     with st.spinner('Downloading video (this may take a while according to the size of video)...'):
@@ -103,12 +109,17 @@ if 'video_text' in st.session_state:
         st.markdown(st.session_state.sentence_info)
 
 # -----HIGHLIGHT PARAGRAPHS------------------------------------------------------------------------
+    st.subheader("Use AI to suggest relevant parts")
     if st.button("Smart text suggestions"):
         st.session_state.video_text = st.session_state.video_text_original
         threshold = 7
         colors = ['blue', 'violet']
         with st.spinner('Selecting interesting parts...'):
-            paragraphs = text_to_paragraph(st.session_state.video_text)
+            try:
+                paragraphs = text_to_paragraph(st.session_state.video_text)
+            except Exception as e:
+                st.error(f"Error processing text: {str(e)}")
+                paragraphs = []
         highlights = 0
         for entry in paragraphs:
             if threshold and entry["score"] < threshold:
@@ -215,14 +226,15 @@ if 'crop_video_path' in st.session_state and 'transcription_path' in st.session_
         st.session_state.crop_video_path is not None:
     st.header("Video captions")
     subtitles = audio_transcription_to_subtitle(st.session_state.transcription_path, output_format="srt")
-    st.session_state.trimmed_subtitles = subtitles_trim(subtitles, st.session_state.start, st.session_state.end)
-    if 'extracted_text' in st.session_state and len(st.session_state.extracted_text) > 1:
-        subtitles_first_row = subtitles_modify_row(st.session_state.trimmed_subtitles, 0)[-1]
-        subtitles_last_row = subtitles_modify_row(st.session_state.trimmed_subtitles, -1)[-1]
-        first_row = longest_common_substring(subtitles_first_row, st.session_state.extracted_text)
-        last_row = longest_common_substring(subtitles_last_row, st.session_state.extracted_text)
-        st.session_state.trimmed_subtitles = subtitles_modify_row(st.session_state.trimmed_subtitles, 0, first_row)[0]
-        st.session_state.trimmed_subtitles = subtitles_modify_row(st.session_state.trimmed_subtitles, -1, last_row)[0]
+    if 'trimmed_subtitles' not in st.session_state:
+        st.session_state.trimmed_subtitles = subtitles_trim(subtitles, st.session_state.start, st.session_state.end)
+        if 'extracted_text' in st.session_state and len(st.session_state.extracted_text) > 1:
+            subtitles_first_row = subtitles_modify_row(st.session_state.trimmed_subtitles, 0)[-1]
+            subtitles_last_row = subtitles_modify_row(st.session_state.trimmed_subtitles, -1)[-1]
+            first_row = longest_common_substring(subtitles_first_row, st.session_state.extracted_text)
+            last_row = longest_common_substring(subtitles_last_row, st.session_state.extracted_text)
+            st.session_state.trimmed_subtitles = subtitles_modify_row(st.session_state.trimmed_subtitles, 0, first_row)[0]
+            st.session_state.trimmed_subtitles = subtitles_modify_row(st.session_state.trimmed_subtitles, -1, last_row)[0]
     if 'video_captions_path' not in st.session_state:
         st.session_state.video_captions_path = None
     cols3 = st.columns((1, 1))
@@ -288,7 +300,6 @@ if 'crop_video_path' in st.session_state and 'transcription_path' in st.session_
 
     if st.button("Make captions"):
         with st.spinner('Adding captions...'):
-            #subtitles = st.session_state.edited_subtitles if 'edited_subtitles' in st.session_state and st.session_state.edited_subtitles is not None else st.session_state.trimmed_subtitles
             video_captions_path = video_add_captions(
                 st.session_state.trimmed_subtitles, st.session_state.crop_video_path,
                 color=font_color, fontsize=font_size, remove_punctuation=remove_punctuation, font=font_path,

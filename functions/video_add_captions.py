@@ -11,7 +11,7 @@ def video_add_captions(subtitle_path: str, video_path: str, output_path: str = N
     # Load SRT file
     subs = pysrt.open(subtitle_path)
     video_clip = VideoFileClip(video_path)
-    video_width, _ = video_clip.size
+    video_width, video_height = video_clip.size
 
     # Convert SubRipItems to the format that SubtitlesClip expects
     subtitles = [((s.start.ordinal / 1000, s.end.ordinal / 1000), s.text) for s in subs]
@@ -25,6 +25,12 @@ def video_add_captions(subtitle_path: str, video_path: str, output_path: str = N
         text_clip = TextClip(txt, font=font, fontsize=fontsize, color=color, method='caption', align='center', size=size)
         return text_clip
 
+    # Create a composite video clip with image and text layered
+    if position == 'third_quarter':
+        position = (0, video_height * 3 / 4)
+    elif position == 'first_quarter':
+        position = (0, video_height * 1 / 4)
+
     generator = lambda txt: txtclip(txt, font, fontsize, color, caption_width)
     subtitles = SubtitlesClip(subtitles, make_textclip=generator).set_pos(position)
 
@@ -37,13 +43,13 @@ def video_add_captions(subtitle_path: str, video_path: str, output_path: str = N
 
     # Write the merged video
     final_clip.write_videofile(output_path)
-    #print(f"Video with subtitles saved at: {output_path}")
 
     return output_path
 
 
-'''font = '../fonts/LEMONMILK-Regular.otf'
-subtitle_path = "../data/audio_transcription.srt"
-video_path = "../data/youtube_video_1.mp4"
-
-video_add_captions(subtitle_path, video_path, font=font, remove_punctuation=False, color='#ffffff')'''
+if __name__ == '__main__':
+    font = '../fonts/LEMONMILK-Regular.otf'
+    subtitle_path = "../data/These_5_Books_Scaled_My_Business_to_Multiple_6_Figures.srt"
+    video_path = "../data/These_5_Books_Scaled_My_Business_to_Multiple_6_Figures_1.mp4"
+    position = 'third_quarter'
+    video_add_captions(subtitle_path, video_path, font=font, remove_punctuation=False, color='#ffffff', position=position)
