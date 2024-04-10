@@ -18,17 +18,25 @@ def extract_media_id(url):
         return None
 
 
-def download_instagram_video(url, save_path='videos_downloaded'):
-    try:
-        video_id = extract_media_id(url)
-        L = instaloader.Instaloader(dirname_pattern=save_path, filename_pattern=video_id)
-        post = Post.from_shortcode(L.context, video_id)
-        L.download_post(post, target=video_id)
-    except Exception as e:
-        print(f"Error downloading video: {e}")
+def download_video_instagram(url, save_path='videos_downloaded'):
+    if 'reel' in url.split('/')[-3]:
+        url = re.sub(r'/reel/', '/p/', url)
+    video_id = extract_media_id(url)
+    out_path = os.path.join(save_path, video_id + '.mp4')
+    if os.path.exists(out_path):
+        print('Video already downloaded')
+        return out_path
+    L = instaloader.Instaloader(dirname_pattern=save_path, filename_pattern=video_id)
+    post = Post.from_shortcode(L.context, video_id)
+    L.download_post(post, target=video_id)
+    # remove extra files
+    for file in os.listdir(save_path):
+        if not file.endswith('.mp4'):
+            os.remove(os.path.join(save_path, file))
+    return out_path
 
 
 if __name__ == '__main__':
-    url = "https://www.instagram.com/p/C5dEJKNLa_L/"
+    url = 'https://www.instagram.com/p/CzvLPDsoyGr/'
     save_path = "videos_downloaded"
-    download_instagram_video(url, save_path)
+    download_video_instagram(url, save_path)
